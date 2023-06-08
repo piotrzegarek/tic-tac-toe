@@ -7,9 +7,9 @@
 {% endblock %}
 
 {% block content %}
-<div class="container btn-container py-5 mt-5">
-  <a href="{{ url_for('game_bp.game_session') }}" class="btn btn-light">Play</a>
-  <a class="btn btn-light">Profile</a>
-  <a href="{{ url_for('auth_bp.logout') }}" class="btn btn-light">Logout</a>
+<div class="container btn-container">
+  <a href="{{ url_for('game_bp.game_session') }}" class="btn btn-dark">Play</a>
+  <a class="btn btn-dark">Profile</a>
+  <a href="{{ url_for('auth_bp.logout') }}" class="btn btn-dark">Logout</a>
 </div>
 {% endblock %}
