@@ -14,8 +14,20 @@
 
 .tickets-text {
     font-size: 1.5rem;
+    width: 300px;
+    text-align: start;
+    padding: 0;
 }
 
 .tickets {
     font-weight: bold;
+}
+
+.add-btn {
+    width: 150px;
+}
+
+.start-btn {
+    width: 25%;
+    font-size: 1rem;
 }

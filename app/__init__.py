@@ -17,13 +17,13 @@ def create_app():
 
     # Initialize plugins
     db.init_app(app)
-    login_manager.login_view = "auth_bp.login_user"
+    login_manager.login_view = "auth_bp.login"
     login_manager.init_app(app)
 
     with app.app_context():
         # Register blueprints
         from .home.routes import home_bp
-        app.register_blueprint(home_bp)
+        app.register_blueprint(home_bp, url_prefix="/home")
         from .auth.routes import auth_bp
         app.register_blueprint(auth_bp)
         from .game.routes import game_bp

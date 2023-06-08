@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, url_for, redirect, request, flash
-from flask_login import login_user
+from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.models import db, User
 
@@ -18,20 +18,23 @@ def login():
 def login_post():
     username = request.form.get("username")
     password = request.form.get("password")
+    remember = True if request.form.get('remember') else False
 
     user = User.query.filter_by(username=username).first()
     if not user or not check_password_hash(user.password, password):
         flash("Please check your login details and try again.")
         return redirect(url_for("auth_bp.login"))
     
-    login_user(user)
+    login_user(user, remember=remember)
 
-    return redirect(url_for("home_bp.profile"))
+    return redirect(url_for("home_bp.home"))
 
 
 @auth_bp.route("/logout")
+@login_required
 def logout():
-    return "Logout"
+    logout_user()
+    return redirect(url_for("auth_bp.login"))
 
 
 @auth_bp.route("/signup")

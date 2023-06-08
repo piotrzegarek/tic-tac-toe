@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, url_for
+from flask_login import login_required
 from app.models import db
 
 
@@ -8,9 +9,6 @@ home_bp = Blueprint("home_bp", __name__,
 
 
 @home_bp.route("/")
-def index():
-    return render_template("index.html")
-
-@home_bp.route("/profile")
-def profile():
-    return render_template("profile.html")
+@login_required
+def home():
+    return render_template("home.html")
