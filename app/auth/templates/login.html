@@ -1,37 +1,39 @@
 {% extends "base.html" %}
 
+{% block head %}
+
+<link rel="stylesheet" href="{{ url_for('auth_bp.static', filename='css/login.css') }}">
+
+{% endblock %}
+
 {% block content %}
-<div class="column is-4 is-offset-4">
-    <h3 class="title">Login</h3>
+<div class="login-wrapper">
+    <h3 class="title pb-3">Login</h3>
     <div class="box">
         {% with messages = get_flashed_messages() %}
         {% if messages %}
-            <div class="notification is-danger">
+            <div class="notification">
                 {{ messages[0] }}
             </div>
         {% endif %}
         {% endwith %}
         <form method="POST" action="/login">
-            <div class="field">
-                <div class="control">
-                    <input class="input is-large" type="text" name="username" placeholder="Your username" autofocus="">
-                </div>
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" name="username" class="form-control" id="username" aria-describedby="username" autocomplete="off">
             </div>
-
-            <div class="field">
-                <div class="control">
-                    <input class="input is-large" type="password" name="password" placeholder="Your Password">
-                </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" name="password" class="form-control" id="password">
             </div>
-            <div class="field">
-                <label class="checkbox">
-                    <input type="checkbox" name="remember">
-                    Remember me
-                </label>
+            <div class="mb-3 form-check">
+                <input type="checkbox" name="remember" class="form-check-input" id="remember">
+                <label class="form-check-label" for="remember">Remember me</label>
             </div>
-            <button class="button is-block is-info is-large is-fullwidth">Login</button>
+            <button type="submit" class="btn btn-primary login-btn">Sign in</button>
         </form>
-        <a href="{{ url_for('auth_bp.signup') }}" class="pt-2">Create account</p>
+        <span class="signup-text">Don't have an account?</span>
+        <a href="{{ url_for('auth_bp.signup') }}" class="signup-anchor">Create account</p>
     </div>
 </div>
 {% endblock %}

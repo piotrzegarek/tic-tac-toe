@@ -64,7 +64,7 @@ function selectSquare(square) {
 function exitSession() {
     // post for session exit, if success then redirect to home page
     if (true) {
-        window.location.href = "/home";
+        window.location.href = "/";
     }
 }
 

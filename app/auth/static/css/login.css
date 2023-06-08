@@ -1,0 +1,36 @@
+.title {
+    font-size: 2rem;
+}
+
+.box,
+.title {
+    width: 30%;
+    margin: 0 auto;
+}
+
+.notification {
+    color: #cc0000;
+}
+
+.login-wrapper {
+    margin-top: 10%;
+}
+
+.signup-anchor,
+.signup-text {
+    margin-top: 1rem;
+    display: inline-block;
+    text-decoration: none;
+    margin-right: 10px;
+}
+
+input:focus,
+input:hover,
+input:active {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.login-btn {
+    width: 30%;
+}

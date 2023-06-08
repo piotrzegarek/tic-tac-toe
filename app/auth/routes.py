@@ -6,7 +6,8 @@ from app.models import db, User
 
 auth_bp = Blueprint("auth_bp", __name__, 
                     template_folder="templates", 
-                    static_folder="static")
+                    static_folder="static",
+                    static_url_path="/auth/static")
 
 
 @auth_bp.route("/login")
@@ -19,6 +20,10 @@ def login_post():
     username = request.form.get("username")
     password = request.form.get("password")
     remember = True if request.form.get('remember') else False
+    
+    if username == "" or password == "":
+        flash("Please fill out all fields.")
+        return redirect(url_for("auth_bp.login"))
 
     user = User.query.filter_by(username=username).first()
     if not user or not check_password_hash(user.password, password):

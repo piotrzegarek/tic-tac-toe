@@ -23,7 +23,7 @@ def create_app():
     with app.app_context():
         # Register blueprints
         from .home.routes import home_bp
-        app.register_blueprint(home_bp, url_prefix="/home")
+        app.register_blueprint(home_bp)
         from .auth.routes import auth_bp
         app.register_blueprint(auth_bp)
         from .game.routes import game_bp

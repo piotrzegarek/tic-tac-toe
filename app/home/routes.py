@@ -5,7 +5,8 @@ from app.models import db
 
 home_bp = Blueprint("home_bp", __name__, 
                     template_folder="templates", 
-                    static_folder="static")
+                    static_folder="static",
+                    static_url_path="/home/static")
 
 
 @home_bp.route("/")
