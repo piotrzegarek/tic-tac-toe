@@ -8,6 +8,9 @@ home_bp = Blueprint("home_bp", __name__,
 
 
 @home_bp.route("/")
-def hello_world():
-    return jsonify(hello="world")
+def index():
+    return jsonify(hello="index")
 
+@home_bp.route("/profile")
+def profile():
+    return jsonify(hello="profile")
