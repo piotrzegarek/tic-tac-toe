@@ -27,7 +27,13 @@
     width: 150px;
 }
 
-.start-btn {
+.start-btn,
+.turn-text {
     width: 25%;
     font-size: 1rem;
+}
+.turn-text {
+    font-weight: bold;
+    display: none;
+    height: 38px;
 }
