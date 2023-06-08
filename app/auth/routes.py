@@ -20,7 +20,7 @@ def login_post():
     username = request.form.get("username")
     password = request.form.get("password")
     remember = True if request.form.get('remember') else False
-    
+
     if username == "" or password == "":
         flash("Please fill out all fields.")
         return redirect(url_for("auth_bp.login"))
@@ -51,10 +51,19 @@ def signup():
 def signup_post():
     username = request.form.get("username")
     password = request.form.get("password")
+    repeat_password = request.form.get("passwordRepeat")
+
+    if username == "" or password == "" or repeat_password == "":
+        flash("Please fill out all fields.")
+        return redirect(url_for("auth_bp.signup"))
+    
+    if password != repeat_password:
+        flash("Passwords do not match.")
+        return redirect(url_for("auth_bp.signup"))
 
     user = User.query.filter_by(username=username).first()
     if user:
-        flash('Email address already exists')
+        flash('Username already exists. Try logging in.')
         return redirect(url_for("auth_bp.signup"))
     
     new_user = User(username=username, password=generate_password_hash(password, method="sha256"))

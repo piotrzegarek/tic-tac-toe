@@ -1,32 +1,42 @@
 {% extends "base.html" %}
 
+{% block head %}
+
+<link rel="stylesheet" href="{{ url_for('auth_bp.static', filename='css/auth.css') }}">
+
+{% endblock %}
+
 {% block content %}
-<div class="column is-4 is-offset-4">
-    <h3 class="title">Sign Up</h3>
+<div class="signup-wrapper">
+    <h3 class="title pb-3">Sign Up</h3>
     <div class="box">
         {% with messages = get_flashed_messages() %}
         {% if messages %}
-            <div class="notification is-danger">
-                {{ messages[0] }}. Go to <a href="{{ url_for('auth_bp.login') }}">login page</a>.
+            <div class="notification">
+                {{ messages[0] }}
             </div>
         {% endif %}
         {% endwith %}
         <form method="POST" action="/signup">
-            <div class="field">
-                <div class="control">
-                    <input class="input is-large" type="text" name="username" placeholder="Username" autofocus="">
-                </div>
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" name="username" class="form-control" id="username" aria-describedby="username" autocomplete="off">
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" name="password" class="form-control" id="password">
             </div>
 
-            <div class="field">
-                <div class="control">
-                    <input class="input is-large" type="password" name="password" placeholder="Password">
-                </div>
+            <div class="mb-3">
+                <label for="passwordRepeat" class="form-label">Repeat password</label>
+                <input type="password" name="passwordRepeat" class="form-control" id="passwordRepeat">
             </div>
 
-            <button class="button is-block is-info is-large is-fullwidth">Sign Up</button>
+            <button type="submit" class="btn btn-primary signup-btn">Sign Up</button>
         </form>
-        <a href="{{ url_for('auth_bp.login') }}" class="pt-2">Go back to login</p>
+
+        <span class="signup-text">Already a user? </span>
+        <a href="{{ url_for('auth_bp.login') }}" class="signup-anchor">Login</p>
     </div>
 </div>
 {% endblock %}

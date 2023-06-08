@@ -12,7 +12,8 @@
     color: #cc0000;
 }
 
-.login-wrapper {
+.login-wrapper,
+.signup-wrapper {
     margin-top: 10%;
 }
 
@@ -21,7 +22,7 @@
     margin-top: 1rem;
     display: inline-block;
     text-decoration: none;
-    margin-right: 10px;
+    margin-right: 5px;
 }
 
 input:focus,
@@ -31,6 +32,7 @@ input:active {
     box-shadow: none !important;
 }
 
-.login-btn {
+.login-btn,
+.signup-btn {
     width: 30%;
 }

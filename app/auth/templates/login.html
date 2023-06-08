@@ -2,7 +2,7 @@
 
 {% block head %}
 
-<link rel="stylesheet" href="{{ url_for('auth_bp.static', filename='css/login.css') }}">
+<link rel="stylesheet" href="{{ url_for('auth_bp.static', filename='css/auth.css') }}">
 
 {% endblock %}
 
@@ -22,16 +22,20 @@
                 <label for="username" class="form-label">Username</label>
                 <input type="text" name="username" class="form-control" id="username" aria-describedby="username" autocomplete="off">
             </div>
+
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
                 <input type="password" name="password" class="form-control" id="password">
             </div>
+
             <div class="mb-3 form-check">
                 <input type="checkbox" name="remember" class="form-check-input" id="remember">
                 <label class="form-check-label" for="remember">Remember me</label>
             </div>
+
             <button type="submit" class="btn btn-primary login-btn">Sign in</button>
         </form>
+
         <span class="signup-text">Don't have an account?</span>
         <a href="{{ url_for('auth_bp.signup') }}" class="signup-anchor">Create account</p>
     </div>
