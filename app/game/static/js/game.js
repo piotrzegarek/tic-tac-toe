@@ -3,6 +3,13 @@ $(document).ready(function(){
 });
 
 /**
+ * End session before exit.
+ */
+$(window).bind('beforeunload', function(){
+    // if game is running end game and session
+});
+
+/**
  * Add click handlers to buttons.
  */
 function buttonHandlers() {
@@ -12,6 +19,14 @@ function buttonHandlers() {
 
     $("#startGame").on( "click", function() {
         startGame();
+    });
+
+    $("#exitSession").on( "click", function() {
+        exitSession();
+    });
+
+    $(".board-square").on( "click", function() {
+        selectSquare(this);
     });
 }
 
@@ -34,3 +49,22 @@ function addTickets() {
         $("#ticketCount").text(10);
     }
 }
+
+function selectSquare(square) {
+    // post for move, if success then update board
+    if (true) {
+        html = `<img src="../../../static/assets/images/x_black.png" class="board-square-img">`;
+        $(square).html(html);
+    }
+}
+
+/**
+ * POST request to end game and session, if success then redirect to home page.
+ */
+function exitSession() {
+    // post for session exit, if success then redirect to home page
+    if (true) {
+        window.location.href = "/home";
+    }
+}
+
