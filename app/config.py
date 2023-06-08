@@ -1,23 +1,19 @@
-"""Flask App configuration."""
-from os import environ
+import os
 
 
-class Config:
-    """Base config."""
-    SECRET_KEY = environ.get('SECRET_KEY')
-    STATIC_FOLDER = 'static'
-    TEMPLATES_FOLDER = 'templates'
+basedir = os.path.abspath(os.path.dirname(__file__))
 
 
-class ProdConfig(Config):
-    """Production config."""
+class Config(object):
+    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "sqlite://")
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+class ProductionConfig(Config):
     FLASK_ENV = "production"
-    FLASK_DEBUG = False
-    DATABASE_URI = environ.get('PROD_DATABASE_URI')
+    DEBUG = False
+    TESTING = False
 
-
-class DevConfig(Config):
-    """Development config."""
+class DevelopmentConfig(Config):
     FLASK_ENV = "development"
-    FLASK_DEBUG = True
-    DATABASE_URI = environ.get('DEV_DATABASE_URI')
+    DEBUG = True
+    TESTING = True

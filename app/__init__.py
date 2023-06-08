@@ -1,21 +1,24 @@
-
-from os import environ, path
-from dotenv import load_dotenv
+import os
 
 from flask import Flask
-from app.config import ProdConfig, DevConfig
-
-basedir = path.abspath(path.dirname(__file__))
-load_dotenv(path.join(basedir, '.env'))
+from app.models import db
 
 
 def create_app():
     app = Flask(__name__)
 
-    flask_config = environ.get("FLASK_CONFIG")
-    if flask_config == "production":
-        app.config.from_object(ProdConfig)
+    # Load config
+    if os.getenv("FLASK_CONFIG") == "production":
+        app.config.from_object("app.config.ProductionConfig")
     else:
-        app.config.from_object(DevConfig)
+        app.config.from_object("app.config.DevelopmentConfig")
+
+    # Initialize plugins
+    db.init_app(app)
+
+    with app.app_context():
+        # Register blueprints
+        from .home.routes import home_bp
+        app.register_blueprint(home_bp, url_prefix="/")
 
     return app

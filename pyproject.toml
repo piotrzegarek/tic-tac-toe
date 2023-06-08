@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "zegar-przyjeb"
+version = "0.1.0"
+description = ""
+authors = ["Igor Czernichowski  <igorcz9@gmail.com>"]
+readme = "README.md"
+packages = [{include = "zegar_przyjeb"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+flask = "^2.3.2"
+flask-sqlalchemy = "^3.0.3"
+psycopg2-binary = "^2.9.6"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
