@@ -28,6 +28,8 @@ def create_app():
         app.register_blueprint(auth_bp)
         from .game.routes import game_bp
         app.register_blueprint(game_bp, url_prefix="/play")
+        from .profile.routes import profile_bp
+        app.register_blueprint(profile_bp, url_prefix="/profile")
 
         # User loader
         @login_manager.user_loader

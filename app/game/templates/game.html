@@ -10,11 +10,11 @@
 {% block content %}
 
 <div class="container">
-    <div class="row justify-content-center text-center mt-5 pt-3">
-        <button id="startGame" class="btn btn-light start-btn">Start game</button>
+    <div class="row justify-content-center text-center pb-2">
+        <button id="startGame" class="btn btn-dark start-btn">Start game</button>
         <span id="turnText" class="turn-text">Your turn!</span>
     </div>
-    <div class="board py-5">
+    <div class="board">
         <div class="row justify-content-center">
             <div class="board-square"></div>
             <div class="board-square"></div>
@@ -32,13 +32,13 @@
         </div>
     </div>
     
-    <div class="tickets-container text-center">
+    <div class="tickets-container text-center pt-2">
         <div class="row justify-content-center">
             <span class="tickets-text">Tickets: <span id="ticketCount" class="tickets">0</span></span>
             <button id="addTickets" class="btn btn-light add-btn">Add tickets</button>
         </div>
         <div class="pt-5">
-            <button id="exitSession" class="btn btn-light">Exit session</button>
+            <button id="exitSession" class="btn btn-dark">Exit session</button>
         </div>
     </div>
 </div>

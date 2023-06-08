@@ -1,5 +1,14 @@
 .board {
     margin: 0 auto;
+    display: none;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh;
 }
 
 .board-square {
@@ -35,7 +44,7 @@
 
 .start-btn,
 .turn-text {
-    width: 25%;
+    width: 450px;
     font-size: 1rem;
 }
 .turn-text {

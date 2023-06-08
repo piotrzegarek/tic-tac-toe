@@ -36,6 +36,7 @@ function buttonHandlers() {
 function startGame() {
     // post for game creation and socket connection
     $("#startGame").fadeOut(200, function() {
+        $(".board").fadeIn(200);
         $("#turnText").fadeIn(200);
     });
 }
