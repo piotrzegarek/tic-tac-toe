@@ -26,6 +26,8 @@ def create_app():
         app.register_blueprint(home_bp)
         from .auth.routes import auth_bp
         app.register_blueprint(auth_bp)
+        from .game.routes import game_bp
+        app.register_blueprint(game_bp, url_prefix="/play")
 
         # User loader
         @login_manager.user_loader
