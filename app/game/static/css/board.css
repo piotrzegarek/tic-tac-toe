@@ -1,0 +1,21 @@
+.board {
+    margin: 0 auto;
+}
+
+.board-square {
+    width: 150px;
+    height: 150px;
+    border: 1px solid black;
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+.tickets-text {
+    font-size: 1.5rem;
+}
+
+.tickets {
+    font-weight: bold;
+}

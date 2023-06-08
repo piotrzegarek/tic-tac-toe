@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block head %}
+
+<link rel="stylesheet" href="{{ url_for('game_bp.static', filename='css/board.css') }}">
+
+{% endblock %}
+
+{% block content %}
+
+<div class="board py-5">
+    <div class="row justify-content-center">
+        <div class="board-square"></div>
+        <div class="board-square"></div>
+        <div class="board-square"></div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="board-square"></div>
+        <div class="board-square"></div>
+        <div class="board-square"></div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="board-square"></div>
+        <div class="board-square"></div>
+        <div class="board-square"></div>
+    </div>
+</div>
+
+<div class="tickets-container text-center">
+    <p class="tickets-text">Tickets: <span id="ticketCount" class="tickets">0</span></p>
+    <button id="addTickets" class="btn btn-light">Add tickets</button>
+    <button class="btn btn-light">Start game</button>
+</div>
+
+{% endblock %}

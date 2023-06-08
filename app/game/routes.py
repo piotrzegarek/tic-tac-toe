@@ -1,6 +1,4 @@
-import requests
-from datetime import datetime
-from flask import Blueprint
+from flask import Blueprint, render_template
 
 game_bp = Blueprint("game_bp", __name__,
                     template_folder="templates",
@@ -13,7 +11,7 @@ from app.game.game_engine import GameEngine
 @game_bp.route("/")
 def game_session():
     # Create game sess
-    return "Game session"
+    return render_template("game.html")
 
 @game_bp.route("create-game", methods=["POST"])
 def create_game():
