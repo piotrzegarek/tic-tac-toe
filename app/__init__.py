@@ -1,8 +1,8 @@
 import os
 
 from flask import Flask
-from flask_login import LoginManager, login_user
-from app.models import db
+from flask_login import LoginManager
+from app.models import db, User
 
 login_manager = LoginManager()
 
@@ -17,6 +17,7 @@ def create_app():
 
     # Initialize plugins
     db.init_app(app)
+    login_manager.login_view = "auth_bp.login_user"
     login_manager.init_app(app)
 
     with app.app_context():
@@ -25,5 +26,10 @@ def create_app():
         app.register_blueprint(home_bp)
         from .auth.routes import auth_bp
         app.register_blueprint(auth_bp)
+
+        # User loader
+        @login_manager.user_loader
+        def load_user(user_id):
+            return User.query.get(int(user_id))
 
     return app
