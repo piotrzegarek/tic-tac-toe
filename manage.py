@@ -1,11 +1,11 @@
-from app import create_app, socketio
+from app import create_app, sio
 from app.models import db
 
 app = create_app()
 
 @app.cli.command("runserver")
 def run():
-    socketio.run(app, host='0.0.0.0', port=5000, debug=True, allow_unsafe_werkzeug=True)
+    sio.run(app, host='0.0.0.0', port=5000, debug=True, allow_unsafe_werkzeug=True)
 
 # @app.cli.command("initdb")
 @app.route("/create_db")
@@ -17,4 +17,4 @@ def init_db():
 
 
 if __name__ == "__main__":
-    socketio.run(app, host='0.0.0.0', port=5000, debug=True, allow_unsafe_werkzeug=True)
+    sio.run(app, host='0.0.0.0', port=5000, debug=True, allow_unsafe_werkzeug=True)

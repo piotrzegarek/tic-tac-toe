@@ -21,6 +21,7 @@ class GameSession(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    socket_id = db.Column(db.String(128), nullable=False)
     tickets = db.Column(db.Integer, nullable=False, default=0)
 
 

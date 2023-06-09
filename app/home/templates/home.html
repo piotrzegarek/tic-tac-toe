@@ -8,7 +8,8 @@
 
 {% block content %}
 <div class="container btn-container">
-  <a href="{{ url_for('game_bp.game_session') }}" class="btn btn-dark">Play</a>
+  <a href="{{ url_for('game_bp.game_session') }}" class="btn btn-dark">Singleplayer</a>
+  <a href="{{ url_for('game_bp.game_session') }}" class="btn btn-dark">Multiplayer</a>
   <a href="{{ url_for('profile_bp.profile') }}" class="btn btn-dark">Profile</a>
   <a href="{{ url_for('auth_bp.logout') }}" class="btn btn-dark">Logout</a>
 </div>

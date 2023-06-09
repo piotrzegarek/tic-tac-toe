@@ -4,7 +4,7 @@ from flask import Flask
 from flask_login import LoginManager
 
 from app.models import db, User
-from app.game.events import socketio
+from app.game.game_engine import sio
 
 login_manager = LoginManager()
 
@@ -21,7 +21,7 @@ def create_app():
     db.init_app(app)
     login_manager.login_view = "auth_bp.login"
     login_manager.init_app(app)
-    socketio.init_app(app)
+    sio.init_app(app)
 
     with app.app_context():
         # Register blueprints

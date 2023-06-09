@@ -12,7 +12,6 @@ from app.game.game_engine import GameEngine
 @game_bp.route("/")
 @login_required
 def game_session():
-    # Create game sess
     return render_template("game.html")
 
 @game_bp.route("create-game", methods=["POST"])

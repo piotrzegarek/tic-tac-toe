@@ -1,10 +1,19 @@
 const socket = io({autoConnect: false});
+let gameSessionId;
 
 /**
  * Connect to socket on page load and create button click handlers.
  */
 $(document).ready(function(){
     socket.connect();
+
+    socket.on('connect-response', function(data) {
+        if (data.success) {
+            gameSessionId = data.game_session_id;
+        } else {
+            showError(data.error);
+        }
+    });
     buttonHandlers();
 });
 
@@ -33,7 +42,7 @@ function buttonHandlers() {
  * POST request to start game, if success then start socket connection.
  */
 function startGame() {
-    socket.emit('startGame');
+    socket.emit('startGame', {game_session_id: gameSessionId});
 
     socket.on('startGame-response', function(data) {
         if (data.success) {
@@ -52,7 +61,7 @@ function startGame() {
  * POST request to add tickets to user, if success then update ticket count.
  */
 function addTickets() {
-    socket.emit('addTickets');
+    socket.emit('addTickets', {game_session_id: gameSessionId});
 
     socket.on('addTickets-response', function(data) {
         if (data.success) {
