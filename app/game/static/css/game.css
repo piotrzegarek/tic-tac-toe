@@ -45,10 +45,22 @@
 .start-btn,
 .turn-text {
     width: 450px;
-    font-size: 1rem;
+    font-size: 1.5rem;
 }
 .turn-text {
     font-weight: bold;
     display: none;
     height: 38px;
+}
+
+.error-msg {
+    color: red;
+    opacity: 0;
+    height: 26px;
+    transition: opacity 0.3s ease-in-out;
+    margin-bottom: 5px;
+}
+
+.error-msg.show {
+    opacity: 1;
 }

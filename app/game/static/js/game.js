@@ -1,12 +1,11 @@
-$(document).ready(function(){
-    buttonHandlers();
-});
+const socket = io({autoConnect: false});
 
 /**
- * End session before exit.
+ * Connect to socket on page load and create button click handlers.
  */
-$(window).bind('beforeunload', function(){
-    // if game is running end game and session
+$(document).ready(function(){
+    socket.connect();
+    buttonHandlers();
 });
 
 /**
@@ -22,7 +21,7 @@ function buttonHandlers() {
     });
 
     $("#exitSession").on( "click", function() {
-        exitSession();
+        window.location.href = "/";
     });
 
     $(".board-square").on( "click", function() {
@@ -34,10 +33,18 @@ function buttonHandlers() {
  * POST request to start game, if success then start socket connection.
  */
 function startGame() {
-    // post for game creation and socket connection
-    $("#startGame").fadeOut(200, function() {
-        $(".board").fadeIn(200);
-        $("#turnText").fadeIn(200);
+    socket.emit('startGame');
+
+    socket.on('startGame-response', function(data) {
+        if (data.success) {
+            $("#ticketCount").text(data.tickets);
+            $("#startGame").fadeOut(200, function() {
+                $(".board").fadeIn(200);
+                $("#turnText").fadeIn(200);
+            });
+        } else {
+            showError(data.error);
+        }
     });
 }
 
@@ -45,10 +52,15 @@ function startGame() {
  * POST request to add tickets to user, if success then update ticket count.
  */
 function addTickets() {
-    // post for ticket addition, if success then update ticket count
-    if (true) {
-        $("#ticketCount").text(10);
-    }
+    socket.emit('addTickets');
+
+    socket.on('addTickets-response', function(data) {
+        if (data.success) {
+            $("#ticketCount").text(10);
+        } else {
+            showError(data.error);
+        }
+    });
 }
 
 function selectSquare(square) {
@@ -60,12 +72,13 @@ function selectSquare(square) {
 }
 
 /**
- * POST request to end game and session, if success then redirect to home page.
+ * Show error message for 3 seconds.
+ * @param {string} error - Error message to display.
  */
-function exitSession() {
-    // post for session exit, if success then redirect to home page
-    if (true) {
-        window.location.href = "/";
-    }
+function showError(error) {
+    $("#errorSpan").text(error);
+    $("#errorSpan").addClass("show");
+    setTimeout(function() {
+        $("#errorSpan").removeClass("show");
+    }, 3000);
 }
-
