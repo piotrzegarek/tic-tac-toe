@@ -73,12 +73,11 @@ socket.on('startGame-response', function(data) {
 });
 
 function renderBoard(board) {
-    console.log(board);
     for (let i = 0; i < board.length; i++) {
         if (board[i] == 'x') {
             html = `<img src="../../../static/assets/images/x_black.png" class="board-square-img">`;
         } else if (board[i] == 'o') {
-            html = `<img src="../../../static/assets/images/o_black.png" class="board-square-img">`;
+            html = `<img src="../../../static/assets/images/o_black.png" class="board-square-img circle">`;
         } else {
             html = ``;
         }
@@ -144,7 +143,6 @@ socket.on('enemyMove-response', function(data) {
 });
 
 socket.on('gameOver', function(data) {
-    console.log(data);
     if (data.winner == player) {
         $("#gameResult").text("You win!");
     } else if (data.winner == 'draw') {
@@ -166,9 +164,6 @@ socket.on('gameOver', function(data) {
 
 
 function handleTurn() {
-    console.log("Handling turn");
-    console.log('current turn: ' + turn);
-    console.log('current player: ' + player);
     if (turn == player) {
         $("#turnText").text("Your turn");
     } else {

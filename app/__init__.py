@@ -4,7 +4,7 @@ from flask import Flask
 from flask_login import LoginManager
 
 from app.models import db, User
-from app.game.events import sio
+from app.game.socket_manager import sio
 
 login_manager = LoginManager()
 

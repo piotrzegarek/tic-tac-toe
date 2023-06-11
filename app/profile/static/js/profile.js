@@ -9,7 +9,6 @@ $(document).ready(function() {
 
 
 function getGamesData() {
-    console.log($('#dateInput').val());
     $.ajax({
         url: '/profile/get_games.json',
         type: 'POST',
