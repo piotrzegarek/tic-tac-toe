@@ -7,7 +7,7 @@ from app.enums import GameResult
 
 class GameLogic():
     def __init__(self, session_id: int, mode: str):
-        self.game = self.initGame(session_id)
+        self.games = [self.initGame(session_id)]
         self.board = [0 for i in range(9)]
         self.turn = 'x'
         self.time = datetime.now()
@@ -26,8 +26,11 @@ class GameLogic():
         else:
             self.player2 = None
 
-    def addPlayer2(self):
+
+    def addPlayer2(self, game_session_id: int):
         self.player2 = 'x' if self.player1 == 'o' else 'o'
+        self.games.append(self.initGame(game_session_id))
+
 
     def initGame(self, session_id: int) -> Game:
         new_game = Game(
@@ -41,19 +44,20 @@ class GameLogic():
 
 
     def endGame(self) -> None:
-        self.game.game_time = (datetime.now() - self.time).total_seconds()
         if self.winner == self.player1:
-            self.game.game_result = GameResult.WIN
+            result = [GameResult.WIN, GameResult.LOSE]
         elif self.winner == 'draw':
-            self.game.game_result = GameResult.DRAW
+            result = [GameResult.DRAW, GameResult.DRAW]
         else:
-            self.game.game_result = GameResult.LOSE
-        game = Game.query.filter_by(id=self.game.id).first()
-        game.game_result = self.game.game_result
-        game.game_time = self.game.game_time
-        game_session_id = self.game.game_session_id
-        game_session = GameSession.query.filter_by(id=game_session_id).first()
-        game.tickets_after = game_session.tickets
+            result = [GameResult.LOSE, GameResult.WIN]
+
+        game_time = (datetime.now() - self.time).total_seconds()
+        for ind, game in enumerate(self.games):
+            game_obj = Game.query.filter_by(id=game.id).first()
+            game_obj.game_time = game_time
+            game_session = GameSession.query.filter_by(id=game.game_session_id).first()
+            game_obj.tickets_after = game_session.tickets
+            game_obj.game_result = result[ind]
         db.session.commit()
         
 

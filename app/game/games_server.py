@@ -12,16 +12,16 @@ class Server(metaclass=Singleton):
     def __init__(self):
         self.games = {}
 
-    def createGame(self, game_session_id, gamemode):
+    def createGame(self, game_session_id: int, gamemode: str):
         if gamemode == 'singleplayer':
             game = GameLogic(game_session_id, gamemode)
-            self.games[game.game.id] = game
+            self.games[game.games[0].id] = game
             player = game.player1
         else:
-            game = self.findFreeGame()
+            game = self.findFreeGame(game_session_id)
             if game == None:
                 game = GameLogic(game_session_id, gamemode)
-                self.games[game.game.id] = game
+                self.games[game.games[0].id] = game
                 player = game.player1
             else:
                 player = game.player2
@@ -29,11 +29,11 @@ class Server(metaclass=Singleton):
         return game, player
     
 
-    def findFreeGame(self):
+    def findFreeGame(self, game_session_id: int):
         for game_ids in self.games:
             game = self.games[game_ids]
             if game.mode == 'multiplayer' and game.player2 == None:
-                game.addPlayer2()
+                game.addPlayer2(game_session_id)
                 return game
         return None
     

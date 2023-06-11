@@ -49,8 +49,7 @@ def handle_startGame(data):
     if game_session.tickets >= 3:
         game_session.tickets -= 3
         new_game, player = server.createGame(game_session_id, 'singleplayer')
-        game_id = new_game.game.id
-        # player = new_game.player1
+        game_id = new_game.games[0].id
         db.session.commit()
 
         sio.emit('startGame-response', {'success': True, 'tickets': game_session.tickets, 'game_id': game_id, 
@@ -71,7 +70,7 @@ def handle_startGame_multiplayer(data):
         new_game, player = server.createGame(game_session_id, 'multiplayer')
         print("Created new multiplayer game")
         print(new_game.player1, new_game.player2)
-        game_id = new_game.game.id
+        game_id = new_game.games[0].id
         db.session.commit()
         print(f"Player {player} joined game {game_id}")
         join_room(f"{game_id}", request.sid)
@@ -95,7 +94,7 @@ def handle_move(data):
         sio.emit('makeMove-response', {'success': True, 'turn': game.turn, 'square_id': data.get('square_id'), 'board': game.board}, to=request.sid)
         is_winner = game.checkWinner()
         if is_winner:
-            game_session_id = game.game.game_session_id
+            game_session_id = game.games[0].game_session_id
             game_session = GameSession.query.filter_by(id=game_session_id).first()
             if is_winner == game.player1:
                 game_session.tickets += 4
@@ -118,16 +117,17 @@ def handle_move_multiplayer(data):
         sio.emit('makeMove-response', {'success': True, 'turn': game.turn, 'square_id': data.get('square_id'), 'board': game.board}, to=f"{game_id}")
         is_winner = game.checkWinner()
         if is_winner:
-            game_session_id = game.game.game_session_id
+            game_session_id = game.games[0].game_session_id
             game_session = GameSession.query.filter_by(id=game_session_id).first()
             if is_winner == game.player1:
                 game_session.tickets += 4
                 db.session.commit()
+
             game.endGame()
 
             server.deleteGame(game_id)
             sio.emit('gameOver', {'winner': is_winner, 'tickets': game_session.tickets}, to=f"{game_id}")
-            
+
     else:
         sio.emit('makeMove-response', {'success': False, 'error': 'Invalid move'}, to=request.sid)
 
@@ -149,9 +149,9 @@ def waitForComputer(game, data):
         is_winner = game.checkWinner()
         if is_winner:
             game.endGame()
-            game_session_id = game.game.game_session_id
+            game_session_id = game.games[0].game_session_id
             game_session = GameSession.query.filter_by(id=game_session_id).first()
-            server.deleteGame(game.game.id)
+            server.deleteGame(game.games[0].id)
             sio.emit('gameOver', {'winner': is_winner, 'tickets': game_session.tickets}, to=request.sid)
 
 
