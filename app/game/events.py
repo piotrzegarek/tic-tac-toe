@@ -98,3 +98,23 @@ def handle_move(data):
     else:
         sio.emit('makeMove-response', {'success': False, 'error': 'Invalid move'})
     
+
+@sio.on('exitGame')
+def handle_exitGame(data):
+    game_id = data.get('game_id')
+    game = server.getGame(game_id)
+    game.endGame()
+    server.deleteGame(game_id)
+    sio.emit('exitGame-response', {'success': True})
+
+
+@sio.on('disconnect')
+def handle_disconnect():
+    sid = request.sid
+    game_session = GameSession.query.filter_by(socket_id=sid).first()
+    if game_session:
+        games = Game.query.filter_by(game_session_id=game_session.id).all()
+        for game in games:
+            if game.id in server.games:
+                game.endGame()
+                server.deleteGame(game.id)

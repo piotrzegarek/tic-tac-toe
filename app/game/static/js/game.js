@@ -12,6 +12,12 @@ $(document).ready(function(){
     buttonHandlers();
 });
 
+$(window).on('beforeunload', function(){
+    if (gameId) {
+        socket.emit('exitGame', {game_id: gameId});
+    }
+});
+
 socket.on('connect-response', function(data) {
     if (data.success) {
         gameSessionId = data.game_session_id;
@@ -33,6 +39,9 @@ function buttonHandlers() {
     });
 
     $("#exitSession").on( "click", function() {
+        if (gameId) {
+            socket.emit('exitGame', {game_id: gameId});
+        }
         window.location.href = "/";
     });
 
