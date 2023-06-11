@@ -3,10 +3,9 @@ from app.models import db
 
 app = create_app()
 
-
+@app.route("/create_db")
 @app.cli.command("create_db")
 def create_db():
-    print("Initializing database")
     db.drop_all()
     db.create_all()
     db.session.commit()

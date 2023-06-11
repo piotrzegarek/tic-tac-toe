@@ -4,12 +4,6 @@ build:
 up:
 	docker-compose up -d
 
-db:
-	docker-compose run --rm app python manage.py create_db
-
-dbb:
-	docker exec -it app python manage.py create_db
-
 down:
 	docker-compose down
 
