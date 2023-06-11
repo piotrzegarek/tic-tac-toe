@@ -62,12 +62,15 @@ socket.on('startGame-response', function(data) {
         turn = data.turn;
         if (player == null) {
             player = data.player;
+            $("#ticketCount").text(data.tickets);
         }
         if (data.oponent) {
             $(".board-square").html("");
             $(".board").removeClass("game-over");
             handleTurn();
-            $("#ticketCount").text(data.tickets);
+            if (data.oponent == player) {
+                $("#ticketCount").text(data.tickets);
+            }
             $("#startGame").fadeOut(200, function() {
                 $(".board").fadeIn(200);
                 $("#turnText").fadeIn(200);
@@ -129,12 +132,12 @@ function handleTurn() {
 socket.on('gameOver', function(data) {
     if (data.winner == player) {
         $("#gameResult").text("You win!");
+        $("#ticketCount").text(data.tickets);
     } else if (data.winner == 'draw') {
         $("#gameResult").text("Draw!");
     } else {
         $("#gameResult").text("You lose!");
     }
-    $("#ticketCount").text(data.tickets);
     $(".board").addClass("game-over");
     $("#turnText").fadeOut(200, function() {
         $("#startGame").fadeIn(200);

@@ -117,16 +117,23 @@ def handle_move_multiplayer(data):
         sio.emit('makeMove-response', {'success': True, 'turn': game.turn, 'square_id': data.get('square_id'), 'board': game.board}, to=f"{game_id}")
         is_winner = game.checkWinner()
         if is_winner:
-            game_session_id = game.games[0].game_session_id
-            game_session = GameSession.query.filter_by(id=game_session_id).first()
             if is_winner == game.player1:
+                game_session_id = game.games[0].game_session_id
+                game_session = GameSession.query.filter_by(id=game_session_id).first()
                 game_session.tickets += 4
-                db.session.commit()
+                winner_tickets = game_session.tickets
+            elif is_winner == game.player2 and game.mode == 'multiplayer':
+                game_session_id = game.games[1].game_session_id
+                game_session = GameSession.query.filter_by(id=game_session_id).first()
+                game_session.tickets += 4
+                winner_tickets = game_session.tickets
+            else:
+                winner_tickets = 0
+            db.session.commit()
 
             game.endGame()
-
             server.deleteGame(game_id)
-            sio.emit('gameOver', {'winner': is_winner, 'tickets': game_session.tickets}, to=f"{game_id}")
+            sio.emit('gameOver', {'winner': is_winner, 'tickets': winner_tickets}, to=f"{game_id}")
 
     else:
         sio.emit('makeMove-response', {'success': False, 'error': 'Invalid move'}, to=request.sid)

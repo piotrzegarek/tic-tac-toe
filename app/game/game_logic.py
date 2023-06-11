@@ -99,6 +99,7 @@ class GameLogic():
         # Check draw
         if 0 not in self.board:
             self.winner = 'draw'
+            print('draw')
             return 'draw'
         
         return None
