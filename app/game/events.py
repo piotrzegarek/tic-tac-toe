@@ -1,8 +1,10 @@
+from datetime import datetime
+
 from .socket_manager import sio
 from flask_login import current_user
 from flask import request
 
-from app.models import db, GameSession
+from app.models import db, GameSession, Game
 from app.game.game_engine import GameEngine
 
 
@@ -36,7 +38,7 @@ def handle_connect():
     new_session = GameSession(
         user_id = current_user.id,
         socket_id = sid,
-        start_date = datetime.now().strftime("%Y/%m/%d")
+        date = datetime.now().strftime("%Y/%m/%d")
     )
     db.session.add(new_session)
     db.session.commit()

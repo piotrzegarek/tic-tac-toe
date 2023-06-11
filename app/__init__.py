@@ -26,12 +26,12 @@ def create_app():
     with app.app_context():
         # Register blueprints
         from .home.routes import home_bp
-        app.register_blueprint(home_bp)
-        from .auth.routes import auth_bp
-        app.register_blueprint(auth_bp)
-        from .game.routes import game_bp
-        app.register_blueprint(game_bp, url_prefix="/play")
         from .profile.routes import profile_bp
+        from .auth.routes import auth_bp
+        from .game.routes import game_bp
+        app.register_blueprint(home_bp)
+        app.register_blueprint(auth_bp)
+        app.register_blueprint(game_bp, url_prefix="/play")
         app.register_blueprint(profile_bp, url_prefix="/profile")
 
         # User loader

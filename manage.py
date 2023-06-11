@@ -3,9 +3,9 @@ from app.models import db
 
 app = create_app()
 
-@app.cli.command("runserver")
-def run():
-    sio.run(app, host='0.0.0.0', port=5000, debug=True, allow_unsafe_werkzeug=True)
+# @app.cli.command("runserver")
+# def run():
+#     sio.run(app, host='0.0.0.0', port=5000, debug=True, allow_unsafe_werkzeug=True)
 
 # @app.cli.command("initdb")
 @app.route("/create_db")
