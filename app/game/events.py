@@ -86,6 +86,7 @@ def handle_move(data):
         sio.emit('makeMove-response', {'success': True, 'turn': game.turn, 'square_id': data.get('square_id')})
         is_winner = game.checkWinner()
         if is_winner:
+            game.endGame()
             game_session_id = game.game.game_session_id
             game_session = GameSession.query.filter_by(id=game_session_id).first()
             if is_winner == game.player:
