@@ -1,6 +1,7 @@
 .board {
     margin: 0 auto;
     display: none;
+    position: relative;
 }
 
 .container {
@@ -62,5 +63,27 @@
 }
 
 .error-msg.show {
+    opacity: 1;
+}
+
+.board.game-over .row {
+    opacity: 0.4;
+}
+
+.game-result {
+    display: none;
+    opacity: 0;
+    width: 100%;
+    font-size: 72px;
+    font-weight: bold;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: opacity 0.3s ease-in-out;
+}
+
+.game-over .game-result {
+    display: block;
     opacity: 1;
 }

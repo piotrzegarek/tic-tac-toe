@@ -1,20 +1,23 @@
 const socket = io({autoConnect: false});
 let gameSessionId;
+let gameId = null;
+let player = null;
+let turn = 'x';
 
 /**
  * Connect to socket on page load and create button click handlers.
  */
 $(document).ready(function(){
     socket.connect();
-
-    socket.on('connect-response', function(data) {
-        if (data.success) {
-            gameSessionId = data.game_session_id;
-        } else {
-            showError(data.error);
-        }
-    });
     buttonHandlers();
+});
+
+socket.on('connect-response', function(data) {
+    if (data.success) {
+        gameSessionId = data.game_session_id;
+    } else {
+        showError(data.error);
+    }
 });
 
 /**
@@ -22,11 +25,11 @@ $(document).ready(function(){
  */
 function buttonHandlers() {
     $("#addTickets").on( "click", function() {
-        addTickets();
+        socket.emit('addTickets', {game_session_id: gameSessionId});
     });
 
     $("#startGame").on( "click", function() {
-        startGame();
+        socket.emit('startGame', {game_session_id: gameSessionId});
     });
 
     $("#exitSession").on( "click", function() {
@@ -34,49 +37,93 @@ function buttonHandlers() {
     });
 
     $(".board-square").on( "click", function() {
-        selectSquare(this);
+        makeMove(this);
     });
 }
 
 /**
- * POST request to start game, if success then start socket connection.
+ * Emit startGame event to server, if success then update game id and show board.
  */
-function startGame() {
-    socket.emit('startGame', {game_session_id: gameSessionId});
+socket.on('startGame-response', function(data) {
+    if (data.success) {
+        gameId = data.game_id;
+        player = data.player;
+        $(".board-square").html("");
+        $(".board").removeClass("game-over");
+        handleTurn();
+        $("#ticketCount").text(data.tickets);
+        $("#startGame").fadeOut(200, function() {
+            $(".board").fadeIn(200);
+            $("#turnText").fadeIn(200);
+        });
+    } else {
+        showError(data.error);
+    }
+});
 
-    socket.on('startGame-response', function(data) {
-        if (data.success) {
-            $("#ticketCount").text(data.tickets);
-            $("#startGame").fadeOut(200, function() {
-                $(".board").fadeIn(200);
-                $("#turnText").fadeIn(200);
-            });
-        } else {
-            showError(data.error);
-        }
-    });
+/**
+ * Emit addTickets event to server, if success then update ticket count.
+ */
+socket.on('addTickets-response', function(data) {
+    if (data.success) {
+        $("#ticketCount").text(10);
+    } else {
+        showError(data.error);
+    }
+});
+
+
+/**
+ * Emit makeMove event to server.
+ * @param {object} square - Square that was clicked.
+ */
+function makeMove(square) {
+    var square_id = $(square).attr('id');
+    socket.emit('makeMove', {square_id: parseInt(square_id), game_id: gameId, player: player});
 }
 
 /**
- * POST request to add tickets to user, if success then update ticket count.
+ * Handle makeMove-response event from server. If success then update board with move.
+ * @param {object} data - Data from server.
  */
-function addTickets() {
-    socket.emit('addTickets', {game_session_id: gameSessionId});
-
-    socket.on('addTickets-response', function(data) {
-        if (data.success) {
-            $("#ticketCount").text(10);
+socket.on('makeMove-response', function(data) {
+    if (data.success) {
+        turn = data.turn;
+        handleTurn();
+        if (turn == 'o') {
+            html = `<img src="../../../static/assets/images/x_black.png" class="board-square-img">`;
         } else {
-            showError(data.error);
+            html = `<img src="../../../static/assets/images/o_black.png" class="board-square-img">`;
         }
-    });
-}
+        $(`#${data.square_id}`).html(html);
+    } else {
+        showError(data.error);
+    }
+});
 
-function selectSquare(square) {
-    // post for move, if success then update board
-    if (true) {
-        html = `<img src="../../../static/assets/images/x_black.png" class="board-square-img">`;
-        $(square).html(html);
+socket.on('gameOver', function(data) {
+    if (data.winner == player) {
+        $("#gameResult").text("You win!");
+    } else {
+        $("#gameResult").text("You lose!");
+    }
+    $(".board").addClass("game-over");
+    $("#turnText").fadeOut(200, function() {
+        $("#startGame").fadeIn(200);
+        
+    });
+    gameId = null;
+    player = null;
+    turn = 'x';
+});
+
+
+
+function handleTurn() {
+    if (turn == player) {
+        $("#turnText").text("Your turn");
+    } else {
+        $("#turnText").text("Opponent's turn");
     }
 }
 
