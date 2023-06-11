@@ -49,6 +49,7 @@ class Server(metaclass=Singleton):
 
     def deleteGame(self, game_id: int) -> None:
         """ Delete game by id from the server. """
-        del self.games[game_id]
+        if game_id in self.games:
+            del self.games[game_id]
 
 server = Server()

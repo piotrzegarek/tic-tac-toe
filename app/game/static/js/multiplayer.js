@@ -12,7 +12,7 @@ function buttonHandlers() {
 
     $("#exitSession").on( "click", function() {
         if (gameId) {
-            socket.emit('exitGame', {game_id: gameId});
+            socket.emit('exitGame', {game_id: gameId, player: player});
         }
         window.location.href = "/";
     });
@@ -78,4 +78,41 @@ socket.on('makeMove-response', function(data) {
     } else {
         showError(data.error);
     }
+});
+
+
+/**
+ * Handle game over event from the server and show result.
+ */
+socket.on('gameOver-multiplayer', function(data) {
+    if (data.winner == player) {
+        $("#gameResult").text("You win!");
+        $("#ticketCount").text(data.tickets);
+    } else if (data.winner == 'draw') {
+        $("#gameResult").text("Draw!");
+    } else {
+        $("#gameResult").text("You lose!");
+    }
+    $(".board").addClass("game-over");
+    $("#turnText").fadeOut(200, function() {
+        $("#startGame").fadeIn(200);
+    });
+    socket.emit('leaveRoom', {game_id: gameId});
+    gameId = null;
+    player = null;
+    turn = null;
+});
+
+
+socket.on('exitGame-response', function(data) {
+    $("#ticketCount").text(data.tickets);
+    $("#gameResult").text("You win!");
+    $("#turnText").fadeOut(200, function() {
+        $('#startGame').fadeIn(200);
+    });
+    $(".board").addClass("game-over");
+    socket.emit('leaveRoom', {game_id: gameId});
+    gameId = null;
+    player = null;
+    turn = null;
 });

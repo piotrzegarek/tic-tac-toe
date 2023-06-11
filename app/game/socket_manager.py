@@ -128,7 +128,7 @@ def handle_move_multiplayer(data):
 
             game.endGame()
             server.deleteGame(game_id)
-            sio.emit('gameOver', {'winner': is_winner, 'tickets': winner_tickets}, to=f"{game_id}")
+            sio.emit('gameOver-multiplayer', {'winner': is_winner, 'tickets': winner_tickets}, to=f"{game_id}")
 
     else:
         sio.emit('makeMove-response', {'success': False, 'error': 'Invalid move'}, to=request.sid)
@@ -162,11 +162,20 @@ def handle_exitGame(data):
     game_id = data.get('game_id')
     game = server.getGame(game_id)
     gamemode = game.mode
+    if gamemode == 'multiplayer':
+        player = data.get('player')
+        if player == game.player1:
+            game_session_id = game.games[1].game_session_id
+        elif player == game.player2:
+            game_session_id = game.games[0].game_session_id
+        game_session = GameSession.query.filter_by(id=game_session_id).first()
+        game_session.tickets += 4
+        tickets = game_session.tickets
+        db.session.commit()
+        leave_room(f"{game_id}", request.sid)
+        sio.emit('exitGame-response', {'tickets': tickets}, to=f"{game_id}")
     game.endGame()
     server.deleteGame(game_id)
-    if gamemode == 'multiplayer':
-        leave_room(f"{game_id}", request.sid)
-        sio.emit('exitGame-response', {'success': True}, to=f"{game_id}")
 
 
 @sio.on('disconnect')
@@ -180,3 +189,9 @@ def handle_disconnect():
                 game_object = server.getGame(game.id)
                 game_object.endGame()
                 server.deleteGame(game.id)
+
+
+@sio.on('leaveRoom')
+def handle_leaveRoom(data):
+    game_id = data.get('game_id')
+    leave_room(f"{game_id}", request.sid)

@@ -83,3 +83,25 @@ socket.on('enemyMove-response', function(data) {
         showError(data.error);
     }
 });
+
+
+/**
+ * Handle game over event from the server and show result.
+ */
+socket.on('gameOver', function(data) {
+    if (data.winner == player) {
+        $("#gameResult").text("You win!");
+        $("#ticketCount").text(data.tickets);
+    } else if (data.winner == 'draw') {
+        $("#gameResult").text("Draw!");
+    } else {
+        $("#gameResult").text("You lose!");
+    }
+    $(".board").addClass("game-over");
+    $("#turnText").fadeOut(200, function() {
+        $("#startGame").fadeIn(200);
+    });
+    gameId = null;
+    player = null;
+    turn = null;
+});
