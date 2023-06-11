@@ -42,6 +42,7 @@ def handle_addTickets(data: dict) -> None:
 
 @sio.on('startGame')
 def handle_startGame(data: dict) -> None:
+    """ Check if user has enough tickets to start game and start game. """
     game_session_id = data.get('game_session_id')
     game_session = GameSession.query.filter_by(id=game_session_id).first()
     if game_session.tickets >= 3:
@@ -61,6 +62,7 @@ def handle_startGame(data: dict) -> None:
 
 @sio.on('startGame-multiplayer')
 def handle_startGame_multiplayer(data):
+    """ Check if user has enough tickets to start game and start game. """
     game_session_id = data.get('game_session_id')
     game_session = GameSession.query.filter_by(id=game_session_id).first()
     if game_session.tickets >= 3:
@@ -81,6 +83,7 @@ def handle_startGame_multiplayer(data):
 
 @sio.on('makeMove')
 def handle_move(data):
+    """ Make move on the board in singleplayer game and check if there is a winner. """
     game_id = data.get('game_id')
     player = data.get('player')
     game = server.getGame(game_id)
@@ -104,6 +107,7 @@ def handle_move(data):
 
 @sio.on('makeMove-multiplayer')
 def handle_move_multiplayer(data):
+    """ Make move on the board in multiplayer game and check if there is a winner. """
     game_id = data.get('game_id')
     player = data.get('player')
     game = server.getGame(game_id)
@@ -136,6 +140,7 @@ def handle_move_multiplayer(data):
     
 @sio.on('waitForMove')
 def handle_waitForMove(data):
+    """ Wait for computer to make a move in singleplayer game. """
     game_id = data.get('game_id')
     game = server.getGame(game_id)
     if game is None:
@@ -145,6 +150,7 @@ def handle_waitForMove(data):
 
 
 def waitForComputer(game, data):
+    """ Get computer move and check if there is a winner. """
     if game.checkWinner() is None:
         game.makeMove(game.player2.generateMove(game.board), game.player2.player)
         sio.emit('enemyMove-response', {'success': True, 'turn': game.turn, 'square_id': data.get('square_id'), 'board': game.board}, to=request.sid)
@@ -159,6 +165,7 @@ def waitForComputer(game, data):
 
 @sio.on('exitGame')
 def handle_exitGame(data):
+    """ Exit game and return to main menu. """
     game_id = data.get('game_id')
     game = server.getGame(game_id)
     gamemode = game.mode
@@ -180,6 +187,7 @@ def handle_exitGame(data):
 
 @sio.on('disconnect')
 def handle_disconnect():
+    """ Disconnect from server and remove current game from the server. """
     sid = request.sid
     game_session = GameSession.query.filter_by(socket_id=sid).first()
     if game_session:
@@ -193,5 +201,6 @@ def handle_disconnect():
 
 @sio.on('leaveRoom')
 def handle_leaveRoom(data):
+    """ Leave multiplayer game room. """
     game_id = data.get('game_id')
     leave_room(f"{game_id}", request.sid)
