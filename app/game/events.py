@@ -5,26 +5,7 @@ from flask_login import current_user
 from flask import request
 
 from app.models import db, GameSession, Game
-from app.game.game_logic import GameLogic
-
-
-class Server():
-    def __init__(self):
-        self.games = {}
-
-    def createGame(self, game_session_id, gamemode):
-        new_game = GameLogic(game_session_id, gamemode)
-        self.games[new_game.game.id] = new_game
-
-        return new_game
-
-    def getGame(self, game_id):
-        return self.games.get(game_id)
-
-    def deleteGame(self, game_id):
-        del self.games[game_id]
-
-server = Server()
+from app.game.games_server import server
 
 
 @sio.on('connect')

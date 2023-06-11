@@ -55,11 +55,11 @@ function buttonHandlers() {
  */
 socket.on('startGame-response', function(data) {
     if (data.success) {
+        $(".board-square").html("");
         renderBoard(data.board);
         gameId = data.game_id;
         player = data.player;
         turn = data.turn;
-        $(".board-square").html("");
         $(".board").removeClass("game-over");
         handleTurn();
         $("#ticketCount").text(data.tickets);
