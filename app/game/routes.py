@@ -8,10 +8,12 @@ game_bp = Blueprint("game_bp", __name__,
 @game_bp.route("/")
 @login_required
 def game_session():
+    """ Render game page for singleplayer. """
     return render_template("game.html", game_type="singleplayer")
 
 @game_bp.route("/multiplayer")
 @login_required
 def game_session_multi():
+    """ Render game page for multiplayer. """
     return render_template("game.html", game_type="multiplayer")
 

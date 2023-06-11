@@ -2,7 +2,7 @@ from datetime import datetime
 
 from flask_login import current_user
 from flask import request
-from flask_socketio import SocketIO, join_room, leave_room, emit, send
+from flask_socketio import SocketIO, join_room, leave_room
 
 from app.models import db, GameSession, Game
 from app.game.games_server import server
@@ -12,10 +12,9 @@ sio = SocketIO()
 
 
 @sio.on('connect')
-def handle_connect():
+def handle_connect() -> None:
+    """ Create new game session for the user. """
     sid = request.sid
-    print('connect ', sid, ' User: ', current_user.username)
-    print("Creating game session")
     new_session = GameSession(
         user_id = current_user.id,
         socket_id = sid,
@@ -24,12 +23,11 @@ def handle_connect():
     db.session.add(new_session)
     db.session.commit()
     db.session.flush()
-    # TODO: Add error handling
     sio.emit('connect-response', {'success': True, 'game_session_id': new_session.id}, to=request.sid)
 
 
 @sio.on('addTickets')
-def handle_addTickets(data):
+def handle_addTickets(data: dict) -> None:
     """ Check if user has 0 tickets and add 10 tickets to the session."""
     game_session_id = data.get('game_session_id')
     game_session = GameSession.query.filter_by(id=game_session_id).first()
@@ -43,7 +41,7 @@ def handle_addTickets(data):
 
 
 @sio.on('startGame')
-def handle_startGame(data):
+def handle_startGame(data: dict) -> None:
     game_session_id = data.get('game_session_id')
     game_session = GameSession.query.filter_by(id=game_session_id).first()
     if game_session.tickets >= 3:
@@ -68,11 +66,8 @@ def handle_startGame_multiplayer(data):
     if game_session.tickets >= 3:
         game_session.tickets -= 3
         new_game, player = server.createGame(game_session_id, 'multiplayer')
-        print("Created new multiplayer game")
-        print(new_game.player1, new_game.player2)
         game_id = new_game.games[0].id
         db.session.commit()
-        print(f"Player {player} joined game {game_id}")
         join_room(f"{game_id}", request.sid)
         sio.emit('startGame-response', {'success': True, 'tickets': game_session.tickets, 'game_id': game_id,
                                         'player': player, 'turn': new_game.turn, 'board': new_game.board, 'oponent': new_game.player2},

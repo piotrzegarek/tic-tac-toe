@@ -6,6 +6,7 @@ from app.models import db, Game, GameSession
 from app.enums import GameResult
 
 class GameLogic():
+    """ Game logic for tic-tac-toe game. """
     def __init__(self, session_id: int, mode: str):
         self.games = [self.initGame(session_id)]
         self.board = [0 for i in range(9)]
@@ -16,7 +17,8 @@ class GameLogic():
         self.initPlayers()
 
 
-    def initPlayers(self):
+    def initPlayers(self) -> None:
+        """ Initialize players for the game, create ComputerPlayer if singleplayer mode, else player2 is None."""
         self.player1 = random.choice(['x', 'o'])
         player2 = 'x' if self.player1 == 'o' else 'o'
         if self.mode == 'singleplayer':
@@ -27,12 +29,14 @@ class GameLogic():
             self.player2 = None
 
 
-    def addPlayer2(self, game_session_id: int):
+    def addPlayer2(self, game_session_id: int) -> None:
+        """ Add player2 to the game for the multiplayer mode. """
         self.player2 = 'x' if self.player1 == 'o' else 'o'
         self.games.append(self.initGame(game_session_id))
 
 
     def initGame(self, session_id: int) -> Game:
+        """ Initialize game in the database. """
         new_game = Game(
             game_session_id=session_id,
         )
@@ -44,6 +48,7 @@ class GameLogic():
 
 
     def endGame(self) -> None:
+        """ End game and update game results in the database. """
         if self.winner == self.player1:
             result = [GameResult.WIN, GameResult.LOSE]
         elif self.winner == 'draw':
@@ -62,6 +67,7 @@ class GameLogic():
         
 
     def makeMove(self, square_id: int, player: str) -> bool:
+        """ Make move on the board. """
         if self.board[square_id] == 0 and self.turn == player:
             self.board[square_id] = self.turn
             self.changeTurn()
@@ -71,6 +77,7 @@ class GameLogic():
         
 
     def changeTurn(self) -> None:
+        """ Change turn to the next player. """
         if self.turn == 'x':
             self.turn = 'o'
         else:
@@ -78,6 +85,7 @@ class GameLogic():
 
 
     def checkWinner(self):
+        """ Check if there is a winner or draw. """
         # Check rows
         for i in range(3):
             if self.board[i*3] == self.board[i*3+1] == self.board[i*3+2] != 0:
@@ -106,14 +114,17 @@ class GameLogic():
     
 
 class ComputerPlayer():
+    """ Computer player for singleplayer mode. """
     def __init__(self, player: str):
         self.player = player
     
     def generateMove(self, board: list) -> int:
+        """ Generate random move for the computer player. """
         time.sleep(1)
         board_options = self.getOptions(board)
 
         return random.choice(board_options)
 
     def getOptions(self, board: list) -> list:
+        """ Get available move options for the computer player. """
         return [i for i, x in enumerate(board) if x == 0]
