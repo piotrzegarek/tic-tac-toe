@@ -13,3 +13,19 @@
     overflow-y: auto;
     border-color: #b5b5b5;
 }
+
+.session-data {
+    cursor: pointer;
+}
+
+.games-data.hide {
+    display: none;
+}
+
+.input-group.date {
+    width: 30%;
+}
+
+.date-input {
+    border-radius: 5px !important;
+}

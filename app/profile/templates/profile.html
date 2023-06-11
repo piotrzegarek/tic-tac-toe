@@ -1,8 +1,11 @@
 {% extends 'base.html' %}
 
 {% block head %}
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/css/bootstrap-datepicker.min.css" integrity="sha512-34s5cpvaNG3BknEWSuOncX28vz97bRI59UnVtEEpFX536A7BtZSJHsDyFoCl8S7Dt2TPzcrCEoHBGeM4SUBDBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="{{ url_for('profile_bp.static', filename='css/profile.css') }}">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/js/bootstrap-datepicker.min.js" integrity="sha512-LsnSViqQyaXpD4mBBdRYeP6sRwJiJveh2ZIbW41EBrNmKxgr/LFZIiWT6yr+nycvhvauz8c2nYMhrP80YhG7Cw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="{{ url_for('profile_bp.static', filename='js/profile.js') }}"></script>
 
 {% endblock %}
@@ -11,10 +14,15 @@
 
 <div class="container jusify-content-center">
   <p class="title-text pt-5">Games history</p>
+  <div class="input-group date mb-2" id="datepicker">
+    <input type="text" class="form-control date-input" placeholder="Select date" id="dateInput" value="{{date}}">
+    <div class="input-group-append"></div>
+  </div>
+
   <table class="table table-striped table-bordered sessions-table">
       <thead>
         <tr>
-          <th scope="col">Session</th>
+          <th scope="col">Session ID</th>
           <th scope="col">Games</th>
           <th scope="col">Wins</th>
           <th scope="col">Losses</th>
@@ -22,20 +30,6 @@
         </tr>
       </thead>
       <tbody id="tableBody">
-        <tr>
-          <td>1</td>
-          <td>11</td>
-          <td>4</td>
-          <td>5</td>
-          <td>2</td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td>7</td>
-          <td>3</td>
-          <td>4</td>
-          <td>0</td>
-        </tr>
 
       </tbody>
     </table>

@@ -27,13 +27,16 @@ class GameEngine():
     def endGame(self) -> None:
         self.game.game_time = (datetime.now() - self.time).total_seconds()
         if self.winner == self.player:
+            print('win')
             self.game.game_result = 'win'
         elif self.winner == 'draw':
+            print('draw')
             self.game.game_result = 'draw'
         else:
-            self.game.game_result = 'loss'
+            print('loss')
+            self.game.game_result = 'lose'
         db.session.commit()
-        
+        print(self.game.game_result)
 
     def makeMove(self, square_id: int, player: str) -> bool:
         # if self.board[square_id] == 0 and self.turn == player:
