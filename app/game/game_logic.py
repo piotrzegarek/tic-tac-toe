@@ -24,9 +24,10 @@ class GameLogic():
             if player2 == self.turn:
                 self.makeMove(self.player2.generateMove(self.board), self.player2.player)
         else:
-            # TODO: Add multiplayer
-            pass
+            self.player2 = None
 
+    def addPlayer2(self):
+        self.player2 = 'x' if self.player1 == 'o' else 'o'
 
     def initGame(self, session_id: int) -> Game:
         new_game = Game(

@@ -2,7 +2,7 @@ from datetime import datetime
 
 from flask_login import current_user
 from flask import request
-from flask_socketio import SocketIO
+from flask_socketio import SocketIO, join_room, leave_room, emit, send
 
 from app.models import db, GameSession, Game
 from app.game.games_server import server
@@ -48,13 +48,36 @@ def handle_startGame(data):
     game_session = GameSession.query.filter_by(id=game_session_id).first()
     if game_session.tickets >= 3:
         game_session.tickets -= 3
-        new_game = server.createGame(game_session_id, 'singleplayer')
+        new_game, player = server.createGame(game_session_id, 'singleplayer')
         game_id = new_game.game.id
-        player = new_game.player1
+        # player = new_game.player1
         db.session.commit()
 
         sio.emit('startGame-response', {'success': True, 'tickets': game_session.tickets, 'game_id': game_id, 
                                         'player': player, 'turn': new_game.turn, 'board': new_game.board}, to=request.sid)
+    elif game_session.tickets == 0:
+        error_msg = 'Not enough tickets to start game'
+        sio.emit('startGame-response', {'success': False, 'error': error_msg}, to=request.sid)
+    else:
+        sio.emit('endSession', to=request.sid)
+
+
+@sio.on('startGame-multiplayer')
+def handle_startGame_multiplayer(data):
+    game_session_id = data.get('game_session_id')
+    game_session = GameSession.query.filter_by(id=game_session_id).first()
+    if game_session.tickets >= 3:
+        game_session.tickets -= 3
+        new_game, player = server.createGame(game_session_id, 'multiplayer')
+        print("Created new multiplayer game")
+        print(new_game.player1, new_game.player2)
+        game_id = new_game.game.id
+        db.session.commit()
+        print(f"Player {player} joined game {game_id}")
+        join_room(f"{game_id}", request.sid)
+        sio.emit('startGame-response', {'success': True, 'tickets': game_session.tickets, 'game_id': game_id,
+                                        'player': player, 'turn': new_game.turn, 'board': new_game.board, 'oponent': new_game.player2},
+                                        to=f"{game_id}")
     elif game_session.tickets == 0:
         error_msg = 'Not enough tickets to start game'
         sio.emit('startGame-response', {'success': False, 'error': error_msg}, to=request.sid)
