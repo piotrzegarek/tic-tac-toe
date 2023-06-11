@@ -3,7 +3,7 @@ from flask_login import UserMixin
 
 from app.enums import GameResult
 
-db = SQLAlchemy()
+db = SQLAlchemy(session_options={'expire_on_commit': False})
 
 class User(UserMixin, db.Model):
     __tablename__ = "users"

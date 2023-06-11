@@ -1,6 +1,7 @@
 from flask_login import current_user
 
 from app.models import GameSession, Game
+from app.enums import GameResult
 
 
 def get_games_data(history_date: str) -> dict:
@@ -19,9 +20,9 @@ def get_session_games(session_id: int) -> dict:
     wins_count, losses_count, draws_count = 0, 0, 0
     games = Game.query.filter_by(game_session_id=session_id).all()
     for game in games:
-        if game.game_result == 'win':
+        if game.game_result == GameResult.WIN:
             wins_count += 1
-        elif game.game_result == 'draw':
+        elif game.game_result == GameResult.DRAW:
             draws_count += 1
         else:
             losses_count += 1

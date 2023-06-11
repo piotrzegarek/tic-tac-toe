@@ -2,7 +2,7 @@ const socket = io({autoConnect: false});
 let gameSessionId;
 let gameId = null;
 let player = null;
-let turn = 'x';
+let turn = null;
 
 /**
  * Connect to socket on page load and create button click handlers.
@@ -55,8 +55,10 @@ function buttonHandlers() {
  */
 socket.on('startGame-response', function(data) {
     if (data.success) {
+        renderBoard(data.board);
         gameId = data.game_id;
         player = data.player;
+        turn = data.turn;
         $(".board-square").html("");
         $(".board").removeClass("game-over");
         handleTurn();
@@ -69,6 +71,20 @@ socket.on('startGame-response', function(data) {
         showError(data.error);
     }
 });
+
+function renderBoard(board) {
+    console.log(board);
+    for (let i = 0; i < board.length; i++) {
+        if (board[i] == 'x') {
+            html = `<img src="../../../static/assets/images/x_black.png" class="board-square-img">`;
+        } else if (board[i] == 'o') {
+            html = `<img src="../../../static/assets/images/o_black.png" class="board-square-img">`;
+        } else {
+            html = ``;
+        }
+        $(`#${i}`).html(html);
+    }
+}
 
 socket.on('endSession', function(data) {
     $(".board").fadeOut(200);
@@ -110,20 +126,29 @@ socket.on('makeMove-response', function(data) {
     if (data.success) {
         turn = data.turn;
         handleTurn();
-        if (turn == 'o') {
-            html = `<img src="../../../static/assets/images/x_black.png" class="board-square-img">`;
-        } else {
-            html = `<img src="../../../static/assets/images/o_black.png" class="board-square-img">`;
-        }
-        $(`#${data.square_id}`).html(html);
+        renderBoard(data.board);
+        socket.emit('waitForMove', {game_id: gameId, player: player});
+    } else {
+        showError(data.error);
+    }
+});
+
+socket.on('enemyMove-response', function(data) {
+    if (data.success) {
+        turn = data.turn;
+        handleTurn();
+        renderBoard(data.board);
     } else {
         showError(data.error);
     }
 });
 
 socket.on('gameOver', function(data) {
+    console.log(data);
     if (data.winner == player) {
         $("#gameResult").text("You win!");
+    } else if (data.winner == 'draw') {
+        $("#gameResult").text("Draw!");
     } else {
         $("#gameResult").text("You lose!");
     }
@@ -141,6 +166,9 @@ socket.on('gameOver', function(data) {
 
 
 function handleTurn() {
+    console.log("Handling turn");
+    console.log('current turn: ' + turn);
+    console.log('current player: ' + player);
     if (turn == player) {
         $("#turnText").text("Your turn");
     } else {

@@ -51,11 +51,12 @@ function renderTable(data) {
                     <tbody>
         `;
         for (var [key, value] of Object.entries(value.games)) {
+            game_time = formatSecondsToMinutes(value.game_time);
             html += `
             <tr>
                 <td>${parseInt(key)+1}</td>
                 <td>${value.game_result}</td>
-                <td>${value.game_time}</td>
+                <td>${game_time}</td>
             </tr>
             `;
         }
@@ -72,3 +73,9 @@ function renderTable(data) {
         $('#games-'+id).toggleClass('hide');
     });
 };
+
+function formatSecondsToMinutes(seconds) {
+    var minutes = Math.floor(seconds / 60);
+    var seconds = seconds - minutes * 60;
+    return minutes + ':' + seconds + ' min';
+}

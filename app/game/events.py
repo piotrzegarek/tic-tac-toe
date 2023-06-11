@@ -5,24 +5,21 @@ from flask_login import current_user
 from flask import request
 
 from app.models import db, GameSession, Game
-from app.game.game_engine import GameEngine
+from app.game.game_logic import GameLogic
 
 
 class Server():
     def __init__(self):
         self.games = {}
 
-    def createGame(self, game_session_id):
-        new_game = GameEngine(game_session_id)
+    def createGame(self, game_session_id, gamemode):
+        new_game = GameLogic(game_session_id, gamemode)
         self.games[new_game.game.id] = new_game
 
-        return {
-            'game_id': new_game.game.id,
-            'player': new_game.player,
-        }
+        return new_game
 
     def getGame(self, game_id):
-        return self.games[game_id]
+        return self.games.get(game_id)
 
     def deleteGame(self, game_id):
         del self.games[game_id]
@@ -67,11 +64,13 @@ def handle_startGame(data):
     game_session = GameSession.query.filter_by(id=game_session_id).first()
     if game_session.tickets >= 3:
         game_session.tickets -= 3
-        data = server.createGame(game_session_id)
-        game_id = data.get('game_id')
-        player = data.get('player')
-        sio.emit('startGame-response', {'success': True, 'tickets': game_session.tickets, 
-                                        'game_id': game_id, 'player': player})
+        new_game = server.createGame(game_session_id, 'singleplayer')
+        game_id = new_game.game.id
+        player = new_game.player1
+        db.session.commit()
+
+        sio.emit('startGame-response', {'success': True, 'tickets': game_session.tickets, 'game_id': game_id, 
+                                        'player': player, 'turn': new_game.turn, 'board': new_game.board})
     elif game_session.tickets == 0:
         error_msg = 'Not enough tickets to start game'
         sio.emit('startGame-response', {'success': False, 'error': error_msg})
@@ -86,13 +85,13 @@ def handle_move(data):
     game = server.getGame(game_id)
     result = game.makeMove(data.get('square_id'), player)
     if result:
-        sio.emit('makeMove-response', {'success': True, 'turn': game.turn, 'square_id': data.get('square_id')})
+        sio.emit('makeMove-response', {'success': True, 'turn': game.turn, 'square_id': data.get('square_id'), 'board': game.board})
         is_winner = game.checkWinner()
         if is_winner:
             game.endGame()
             game_session_id = game.game.game_session_id
             game_session = GameSession.query.filter_by(id=game_session_id).first()
-            if is_winner == game.player:
+            if is_winner == game.player1:
                 game_session.tickets += 4
                 db.session.commit()
 
@@ -101,6 +100,29 @@ def handle_move(data):
     else:
         sio.emit('makeMove-response', {'success': False, 'error': 'Invalid move'})
     
+    
+@sio.on('waitForMove')
+def handle_waitForMove(data):
+    game_id = data.get('game_id')
+    game = server.getGame(game_id)
+    if game is None:
+        return
+    if game.mode == 'singleplayer':
+        waitForComputer(game)
+
+
+def waitForComputer(game):
+    if game.checkWinner() is None:
+        game.makeMove(game.player2.generateMove(game.board), game.player2.player)
+        sio.emit('enemyMove-response', {'success': True, 'turn': game.turn, 'square_id': data.get('square_id'), 'board': game.board})
+        is_winner = game.checkWinner()
+        if is_winner:
+            game.endGame()
+            game_session_id = game.game.game_session_id
+            game_session = GameSession.query.filter_by(id=game_session_id).first()
+            server.deleteGame(game.game.id)
+            sio.emit('gameOver', {'winner': is_winner, 'tickets': game_session.tickets})
+
 
 @sio.on('exitGame')
 def handle_exitGame(data):
@@ -119,5 +141,6 @@ def handle_disconnect():
         games = Game.query.filter_by(game_session_id=game_session.id).all()
         for game in games:
             if game.id in server.games:
-                game.endGame()
+                game_object = server.getGame(game.id)
+                game_object.endGame()
                 server.deleteGame(game.id)
