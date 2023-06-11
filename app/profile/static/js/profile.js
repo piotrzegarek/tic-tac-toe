@@ -45,6 +45,7 @@ function renderTable(data) {
                         <tr>
                             <th>Game No.</th>
                             <th>Result</th>
+                            <th>Tickets</th>
                             <th>Time</th>
                         </tr>
                     </thead>
@@ -56,6 +57,7 @@ function renderTable(data) {
             <tr>
                 <td>${parseInt(key)+1}</td>
                 <td>${value.game_result}</td>
+                <td>${value.tickets_after}</td>
                 <td>${game_time}</td>
             </tr>
             `;
@@ -77,5 +79,8 @@ function renderTable(data) {
 function formatSecondsToMinutes(seconds) {
     var minutes = Math.floor(seconds / 60);
     var seconds = seconds - minutes * 60;
+    if (seconds < 10) {
+        seconds = '0' + seconds;
+    }
     return minutes + ':' + seconds + ' min';
 }

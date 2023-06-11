@@ -88,12 +88,12 @@ def handle_move(data):
         sio.emit('makeMove-response', {'success': True, 'turn': game.turn, 'square_id': data.get('square_id'), 'board': game.board})
         is_winner = game.checkWinner()
         if is_winner:
-            game.endGame()
             game_session_id = game.game.game_session_id
             game_session = GameSession.query.filter_by(id=game_session_id).first()
             if is_winner == game.player1:
                 game_session.tickets += 4
                 db.session.commit()
+            game.endGame()
 
             server.deleteGame(game_id)
             sio.emit('gameOver', {'winner': is_winner, 'tickets': game_session.tickets})
@@ -108,10 +108,10 @@ def handle_waitForMove(data):
     if game is None:
         return
     if game.mode == 'singleplayer':
-        waitForComputer(game)
+        waitForComputer(game, data)
 
 
-def waitForComputer(game):
+def waitForComputer(game, data):
     if game.checkWinner() is None:
         game.makeMove(game.player2.generateMove(game.board), game.player2.player)
         sio.emit('enemyMove-response', {'success': True, 'turn': game.turn, 'square_id': data.get('square_id'), 'board': game.board})

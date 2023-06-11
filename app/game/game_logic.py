@@ -50,12 +50,14 @@ class GameLogic():
         game = Game.query.filter_by(id=self.game.id).first()
         game.game_result = self.game.game_result
         game.game_time = self.game.game_time
+        game_session_id = self.game.game_session_id
+        game_session = GameSession.query.filter_by(id=game_session_id).first()
+        game.tickets_after = game_session.tickets
         db.session.commit()
         
 
     def makeMove(self, square_id: int, player: str) -> bool:
         if self.board[square_id] == 0 and self.turn == player:
-        # if self.board[square_id] == 0:
             self.board[square_id] = self.turn
             self.changeTurn()
             return True
@@ -104,7 +106,7 @@ class ComputerPlayer():
     def generateMove(self, board: list) -> int:
         time.sleep(1)
         board_options = self.getOptions(board)
-        
+
         return random.choice(board_options)
 
     def getOptions(self, board: list) -> list:

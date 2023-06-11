@@ -29,7 +29,8 @@ def get_session_games(session_id: int) -> dict:
         
         games_data.append({
             'game_result': game.game_result.value,
-            'game_time': game.game_time
+            'game_time': game.game_time,
+            'tickets_after': game.tickets_after
         })
 
     return {'wins': wins_count,

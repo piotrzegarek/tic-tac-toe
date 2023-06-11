@@ -33,3 +33,4 @@ class Game(db.Model):
     game_session_id = db.Column(db.Integer, db.ForeignKey("game_sessions.id"), nullable=False)
     game_result = db.Column(db.Enum(GameResult), default=GameResult.LOSE, nullable=False)
     game_time = db.Column(db.Integer)
+    tickets_after = db.Column(db.Integer)

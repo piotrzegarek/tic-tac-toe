@@ -18,21 +18,22 @@
     <input type="text" class="form-control date-input" placeholder="Select date" id="dateInput" value="{{date}}">
     <div class="input-group-append"></div>
   </div>
-
-  <table class="table table-striped table-bordered sessions-table table-responsive">
-      <thead>
-        <tr>
-          <th scope="col">Session ID</th>
-          <th scope="col">Games</th>
-          <th scope="col">Wins</th>
-          <th scope="col">Losses</th>
-          <th scope="col">Draws</th>
-        </tr>
-      </thead>
-      <tbody id="tableBody">
-      </tbody>
-  </table>
-  <a href="{{ url_for('home_bp.home') }}" class="btn btn-dark mb-3">Go back</a>
+  <div class="table-wrapper">
+    <table class="table table-striped table-bordered sessions-table table-responsive">
+        <thead>
+          <tr>
+            <th scope="col">Session ID</th>
+            <th scope="col">Games</th>
+            <th scope="col">Wins</th>
+            <th scope="col">Losses</th>
+            <th scope="col">Draws</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+        </tbody>
+    </table>
+  </div>
+  <a href="{{ url_for('home_bp.home') }}" class="btn btn-dark my-3">Go back</a>
 </div>
 
 {% endblock %}
