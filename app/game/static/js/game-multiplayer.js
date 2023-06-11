@@ -32,7 +32,6 @@ socket.on('connect-response', function(data) {
  */
 function buttonHandlers() {
     $("#addTickets").on( "click", function() {
-        console.log(gameId, player, turn);
         socket.emit('addTickets', {game_session_id: gameSessionId});
     });
 
@@ -52,6 +51,7 @@ function buttonHandlers() {
         makeMove(this);
     });
 }
+
 
 /**
  * Emit startGame event to server, if success then update game id and show board.
@@ -79,7 +79,7 @@ socket.on('startGame-response', function(data) {
             });
         }
     } else {
-        // showError(data.error);
+        showError(data.error);
     }
 });
 
@@ -94,14 +94,55 @@ socket.on('addTickets-response', function(data) {
     }
 });
 
+/**
+ * Emit makeMove event to server.
+ * @param {object} square - Square that was clicked.
+ */
+function makeMove(square) {
+    var square_id = $(square).attr('id');
+    socket.emit('makeMove-multiplayer', {square_id: parseInt(square_id), game_id: gameId, player: player});
+}
+
+/**
+ * Handle makeMove-response event from server. If success then update board with move.
+ * @param {object} data - Data from server.
+ */
+socket.on('makeMove-response', function(data) {
+    if (data.success) {
+        turn = data.turn;
+        handleTurn();
+        renderBoard(data.board);
+    } else {
+        showError(data.error);
+    }
+});
 
 function handleTurn() {
     if (turn == player) {
-        $("#turnText").text(`${turn} turn`);
+        $("#turnText").text("Your turn");
     } else {
-        $("#turnText").text(`${turn} turn`);
+        $("#turnText").text("Opponent's turn");
     }
 }
+
+
+socket.on('gameOver', function(data) {
+    if (data.winner == player) {
+        $("#gameResult").text("You win!");
+    } else if (data.winner == 'draw') {
+        $("#gameResult").text("Draw!");
+    } else {
+        $("#gameResult").text("You lose!");
+    }
+    $("#ticketCount").text(data.tickets);
+    $(".board").addClass("game-over");
+    $("#turnText").fadeOut(200, function() {
+        $("#startGame").fadeIn(200);
+    });
+    gameId = null;
+    player = null;
+    turn = null;
+});
 
 
 /**
@@ -114,4 +155,17 @@ function showError(error) {
     setTimeout(function() {
         $("#errorSpan").removeClass("show");
     }, 3000);
+}
+
+function renderBoard(board) {
+    for (let i = 0; i < board.length; i++) {
+        if (board[i] == 'x') {
+            html = `<img src="../../../static/assets/images/x_black.png" class="board-square-img">`;
+        } else if (board[i] == 'o') {
+            html = `<img src="../../../static/assets/images/o_black.png" class="board-square-img circle">`;
+        } else {
+            html = ``;
+        }
+        $(`#${i}`).html(html);
+    }
 }

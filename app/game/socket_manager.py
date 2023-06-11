@@ -107,6 +107,30 @@ def handle_move(data):
     else:
         sio.emit('makeMove-response', {'success': False, 'error': 'Invalid move'}, to=request.sid)
     
+
+@sio.on('makeMove-multiplayer')
+def handle_move_multiplayer(data):
+    game_id = data.get('game_id')
+    player = data.get('player')
+    game = server.getGame(game_id)
+    result = game.makeMove(data.get('square_id'), player)
+    if result:
+        sio.emit('makeMove-response', {'success': True, 'turn': game.turn, 'square_id': data.get('square_id'), 'board': game.board}, to=f"{game_id}")
+        is_winner = game.checkWinner()
+        if is_winner:
+            game_session_id = game.game.game_session_id
+            game_session = GameSession.query.filter_by(id=game_session_id).first()
+            if is_winner == game.player1:
+                game_session.tickets += 4
+                db.session.commit()
+            game.endGame()
+
+            server.deleteGame(game_id)
+            sio.emit('gameOver', {'winner': is_winner, 'tickets': game_session.tickets}, to=f"{game_id}")
+            
+    else:
+        sio.emit('makeMove-response', {'success': False, 'error': 'Invalid move'}, to=request.sid)
+
     
 @sio.on('waitForMove')
 def handle_waitForMove(data):
@@ -135,9 +159,12 @@ def waitForComputer(game, data):
 def handle_exitGame(data):
     game_id = data.get('game_id')
     game = server.getGame(game_id)
+    gamemode = game.mode
     game.endGame()
     server.deleteGame(game_id)
-    sio.emit('exitGame-response', {'success': True}, to=request.sid)
+    if gamemode == 'multiplayer':
+        leave_room(f"{game_id}", request.sid)
+        sio.emit('exitGame-response', {'success': True}, to=f"{game_id}")
 
 
 @sio.on('disconnect')

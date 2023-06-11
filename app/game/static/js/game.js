@@ -158,7 +158,7 @@ socket.on('gameOver', function(data) {
     });
     gameId = null;
     player = null;
-    turn = 'x';
+    turn = null;
 });
 
 
