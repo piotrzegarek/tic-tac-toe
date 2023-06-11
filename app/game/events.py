@@ -1,4 +1,3 @@
-import random
 from .socket_manager import sio
 from flask_login import current_user
 from flask import request
@@ -15,7 +14,10 @@ class Server():
         new_game = GameEngine(game_session_id)
         self.games[new_game.game.id] = new_game
 
-        return new_game.game.id
+        return {
+            'game_id': new_game.game.id,
+            'player': new_game.player,
+        }
 
     def getGame(self, game_id):
         return self.games[game_id]
@@ -60,14 +62,18 @@ def handle_addTickets(data):
 def handle_startGame(data):
     game_session_id = data.get('game_session_id')
     game_session = GameSession.query.filter_by(id=game_session_id).first()
-    if game_session.tickets > 3:
+    if game_session.tickets >= 3:
         game_session.tickets -= 3
-        game_id = server.createGame(game_session_id)
-        player = random.choice(['x', 'o'])
-        sio.emit('startGame-response', {'success': True, 'tickets': game_session.tickets, 'game_id': game_id, 'player': player})
-    else:
+        data = server.createGame(game_session_id)
+        game_id = data.get('game_id')
+        player = data.get('player')
+        sio.emit('startGame-response', {'success': True, 'tickets': game_session.tickets, 
+                                        'game_id': game_id, 'player': player})
+    elif game_session.tickets == 0:
         error_msg = 'Not enough tickets to start game'
         sio.emit('startGame-response', {'success': False, 'error': error_msg})
+    else:
+        sio.emit('endSession')
 
 
 @sio.on('makeMove')
@@ -80,8 +86,14 @@ def handle_move(data):
         sio.emit('makeMove-response', {'success': True, 'turn': game.turn, 'square_id': data.get('square_id')})
         is_winner = game.checkWinner()
         if is_winner:
+            game_session_id = game.game.game_session_id
+            game_session = GameSession.query.filter_by(id=game_session_id).first()
+            if is_winner == game.player:
+                game_session.tickets += 4
+                db.session.commit()
+
             server.deleteGame(game_id)
-            sio.emit('gameOver', {'winner': is_winner})
+            sio.emit('gameOver', {'winner': is_winner, 'tickets': game_session.tickets})
     else:
         sio.emit('makeMove-response', {'success': False, 'error': 'Invalid move'})
     

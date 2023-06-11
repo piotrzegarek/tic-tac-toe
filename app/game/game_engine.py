@@ -1,3 +1,4 @@
+import random
 from datetime import datetime
 
 from app.models import db, Game, GameSession
@@ -7,6 +8,7 @@ class GameEngine():
     def __init__(self, session_id: int):
         self.game = self.initGame(session_id)
         self.board = [0 for i in range(9)]
+        self.player = random.choice(['x', 'o'])
         self.turn = 'x'
 
 
@@ -20,8 +22,8 @@ class GameEngine():
         db.session.flush()
 
         return new_game
-    
-    
+
+
     def makeMove(self, square_id: int, player: str) -> bool:
         # if self.board[square_id] == 0 and self.turn == player:
         if self.board[square_id] == 0:

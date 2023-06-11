@@ -61,6 +61,17 @@ socket.on('startGame-response', function(data) {
     }
 });
 
+socket.on('endSession', function(data) {
+    $(".board").fadeOut(200);
+    $("#turnText").fadeOut(200);
+    $("#startGame").fadeOut(200);
+    $("#errorSpan").text("Session ended");
+    $("#errorSpan").addClass("show");
+    setTimeout(function() {
+        window.location.href = "/";
+    }, 4000);
+})
+
 /**
  * Emit addTickets event to server, if success then update ticket count.
  */
@@ -107,6 +118,7 @@ socket.on('gameOver', function(data) {
     } else {
         $("#gameResult").text("You lose!");
     }
+    $("#ticketCount").text(data.tickets);
     $(".board").addClass("game-over");
     $("#turnText").fadeOut(200, function() {
         $("#startGame").fadeIn(200);
