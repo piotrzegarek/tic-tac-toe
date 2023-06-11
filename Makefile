@@ -7,9 +7,6 @@ up:
 db:
 	docker-compose exec app python manage.py create_db
 
-db_test:
-	docker-compose exec flask --app manage initdb
-
 down:
 	docker-compose down
 
