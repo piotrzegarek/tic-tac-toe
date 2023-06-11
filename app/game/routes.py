@@ -14,12 +14,3 @@ from app.game.game_engine import GameEngine
 def game_session():
     return render_template("game.html")
 
-@game_bp.route("create-game", methods=["POST"])
-@login_required
-def create_game():
-    # Create game in session
-    # data = requests.get_json()
-    # game_session_id = data["game_session_id"]
-    # game = GameEngine(game_session_id)
-
-    return "Create game"

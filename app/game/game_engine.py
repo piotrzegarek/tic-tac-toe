@@ -17,7 +17,6 @@ class GameEngine():
     def initGame(self, session_id: int) -> Game:
         new_game = Game(
             game_session_id=session_id,
-            date = datetime.now().strftime("%Y/%m/%d")
         )
         db.session.add(new_game)
         db.session.commit()

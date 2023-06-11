@@ -35,7 +35,8 @@ def handle_connect():
     print("Creating game session")
     new_session = GameSession(
         user_id = current_user.id,
-        socket_id = sid
+        socket_id = sid,
+        start_date = datetime.now().strftime("%Y/%m/%d")
     )
     db.session.add(new_session)
     db.session.commit()

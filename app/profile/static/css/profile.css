@@ -1,0 +1,10 @@
+.container {
+    height: 100vh;
+    background-color: red;
+}
+
+.title-text {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 0;
+}

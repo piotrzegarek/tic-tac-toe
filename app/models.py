@@ -23,6 +23,7 @@ class GameSession(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     socket_id = db.Column(db.String(128), nullable=False)
     tickets = db.Column(db.Integer, nullable=False, default=0)
+    date = db.Column(db.DateTime, nullable=False)
 
 
 class Game(db.Model):
@@ -32,4 +33,3 @@ class Game(db.Model):
     game_session_id = db.Column(db.Integer, db.ForeignKey("game_sessions.id"), nullable=False)
     game_result = db.Column(db.Enum(GameResult), default=GameResult.LOSE, nullable=False)
     game_time = db.Column(db.Integer)
-    date = db.Column(db.DateTime, nullable=False)
