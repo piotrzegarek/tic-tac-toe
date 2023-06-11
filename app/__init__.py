@@ -23,6 +23,7 @@ def create_app():
     login_manager.init_app(app)
     sio.init_app(app)
 
+
     with app.app_context():
         # Register blueprints
         from .home.routes import home_bp
