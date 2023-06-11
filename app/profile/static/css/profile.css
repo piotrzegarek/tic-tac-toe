@@ -9,8 +9,6 @@
 }
 
 .sessions-table {
-    max-height: 70vh;
-    overflow-y: auto;
     border-color: #b5b5b5;
 }
 

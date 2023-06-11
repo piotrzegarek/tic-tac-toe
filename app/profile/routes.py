@@ -8,21 +8,24 @@ profile_bp = Blueprint("profile_bp", __name__,
 
 from app.profile.functions import get_games_data
 
-@profile_bp.route("/")
+@profile_bp.route("/", methods=["GET"])
 @login_required
 def profile():
+    """ Render profile history page. """
     date = datetime.now().strftime("%m/%d/%Y")
+
     return render_template("profile.html", date=date)
 
 
 @profile_bp.route("/get_games.json", methods=["POST"])
 @login_required
 def get_games():
+    """ Get games data from database for passed date. """
     data = request.get_json()
     try:
         history_date = data.get('date')
         result = get_games_data(history_date)
-        
+
         return jsonify(result), 200
     except Exception as e:
         print(e)
